@@ -1,0 +1,34 @@
+{
+    "name": "eplayment/laravel-wallet-pkg",
+    "description": "Wallet Package",
+    "license": "MIT",
+    "authors": [{
+        "name": "Airhon Carlo Cortez",
+        "email": "acgcortez@multisyscorp.com"
+    }],
+    "minimum-stability": "stable",
+    "require": {
+        "laravel/framework": "^7.24",
+        "php": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Eplayment\\Wallet\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Eplayment\\Wallet\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Eplayment\\Wallet\\WalletServiceProvider"
+            ],
+            "aliases": {
+                "BuxCash": "Eplayment\\Wallet\\Facades\\Wallet"
+            }
+        }
+    }
+}
