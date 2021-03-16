@@ -60,4 +60,11 @@ class Wallet
 
         return $response->json();
     }
+
+    public function getIdtype($request)
+    {
+        $response = $this->client->get($this->endpoint . '/id-type', $request->all());
+
+        return $response->json();
+    }
 }
