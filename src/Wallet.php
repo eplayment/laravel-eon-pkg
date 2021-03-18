@@ -23,7 +23,7 @@ class Wallet
     {
         $response = $this->client->post($this->endpoint . '/kyc/intiate', $request->all());
 
-        return $response->json();
+        return response($response->json())->setStatusCode($response->getStatusCode());
     }
 
     public function getEmploymentStatus($request)
