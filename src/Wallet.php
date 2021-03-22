@@ -67,4 +67,11 @@ class Wallet
 
         return $response->json();
     }
+
+    public function getNationality($request)
+    {
+        $response = $this->client->get($this->endpoint . '/nationality', $request->all());
+
+        return $response->json();
+    }
 }
