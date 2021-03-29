@@ -13,7 +13,8 @@ class Wallet
     {
         $this->endpoint = config('wallet.url');
         $this->client = Http::withHeaders([
-            'content-type'  =>  'application/json'
+            'content-type'  =>  'application/json',
+            'Accept'        =>  'application/json'
         ]);
 
         return $this;
@@ -73,5 +74,22 @@ class Wallet
         $response = $this->client->get($this->endpoint . '/nationality', $request->all());
 
         return $response->json();
+    }
+
+    public function getProductType($request)
+    {
+        $response = $this->client->get($this->endpoint . '/product-type', $request->all());
+
+        return $response->json();
+    }
+
+    public function upgradeAccount($request)
+    {
+        $response = $this->client->post($this->endpoint . '/upgrade-account/3135710', [
+            'product_code'  =>  $request->product_code,
+            'currency'      =>  'PHP'
+        ]);
+
+        return response($response->json())->setStatusCode($response->getStatusCode());
     }
 }
