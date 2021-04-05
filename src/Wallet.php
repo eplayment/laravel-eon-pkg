@@ -92,4 +92,25 @@ class Wallet
 
         return response($response->json())->setStatusCode($response->getStatusCode());
     }
+
+    public function getBanks($request)
+    {
+        $response = $this->client->post($this->endpoint . '/banks/instapay', $request->all());
+
+        return response($response->json())->setStatusCode($response->getStatusCode());
+    }
+
+    public function transferViaInstapay($request)
+    {
+        $response = $this->client->post($this->endpoint . '/wallet/fund/transfer/instapay/060002135550', [
+            'password'          =>  'password',
+            'amount'            =>  $request->amount,
+            'accredited_bank'   =>  $request->accredited_bank,
+            'credit_account'    =>  $request->credit_account,
+            "account_name"      =>  $request->account_name,
+            "account_address"   =>  $request->account_address
+        ]);
+
+        return response($response->json())->setStatusCode($response->getStatusCode());
+    }
 }
