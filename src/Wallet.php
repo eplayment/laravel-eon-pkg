@@ -27,6 +27,13 @@ class Wallet
         return response($response->json())->setStatusCode($response->getStatusCode());
     }
 
+    public function getKycStatus($transaction_id)
+    {
+        $response = $this->client->get($this->endpoint . '/kyc/inquire/'. $transaction_id);
+
+        return $response->json();
+    }
+
     public function getEmploymentStatus($request)
     {
         $response = $this->client->get($this->endpoint . '/employment-status', $request->all());
