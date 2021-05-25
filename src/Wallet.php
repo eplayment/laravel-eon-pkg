@@ -29,7 +29,7 @@ class Wallet
 
     public function getKycStatus($transaction_id)
     {
-        $response = $this->client->get($this->endpoint . '/kyc/inquire/'. $transaction_id);
+        $response = $this->client->get($this->endpoint . '/kyc/inquire/' . $transaction_id);
 
         return $response->json();
     }
@@ -119,5 +119,42 @@ class Wallet
         ]);
 
         return response($response->json())->setStatusCode($response->getStatusCode());
+    }
+
+    public function createVirtualAccount($request)
+    {
+        $response = $this->client->post($this->endpoint . '/create/virtual-account', [
+            'customer_id'   =>  $request->customer_id,
+            'product_type'  =>  $request->product_type,
+            'nickname'      =>  $request->nickname,
+            'password'      =>  'password'
+        ]);
+
+        return response($this->sendResponse($response->getStatusCode(), $response->json()))
+            ->setStatusCode($response->getStatusCode());
+    }
+
+    private function sendResponse($status_code, $response_data)
+    {
+        if ($status_code === 201 || $status_code === 200) {
+            return [
+                'success'   =>  true,
+                'message'   =>  null,
+                'data'      =>  $response_data
+            ];
+        }
+
+        return [
+            'success'   =>  false,
+            $response_data
+        ];
+    }
+
+    public function getCards($customer_id)
+    {
+        $response = $this->client->get($this->endpoint . '/card/get/' . $customer_id);
+
+        return response($this->sendResponse($response->getStatusCode(), $response->json()))
+            ->setStatusCode($response->getStatusCode());
     }
 }
