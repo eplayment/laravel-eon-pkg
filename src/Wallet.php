@@ -137,22 +137,60 @@ class Wallet
     private function sendResponse($status_code, $response_data)
     {
         if ($status_code === 201 || $status_code === 200) {
+            if (!empty($response_data['success']))
+                return $response_data;
             return [
                 'success'   =>  true,
-                'message'   =>  null,
+                'message'   =>  !empty($response_data['description']) ? $response_data['description'] : null,
                 'data'      =>  $response_data
             ];
         }
 
-        return [
+        return array_merge([
             'success'   =>  false,
-            $response_data
-        ];
+
+        ], $response_data);
     }
 
     public function getCards($customer_id)
     {
         $response = $this->client->get($this->endpoint . '/card/get/' . $customer_id);
+
+        return response($this->sendResponse($response->getStatusCode(), $response->json()))
+            ->setStatusCode($response->getStatusCode());
+    }
+
+    public function lockCard($account_number)
+    {
+        $response = $this->client->post($this->endpoint . '/card/lock/' . $account_number, [
+            'password'      =>  'password'
+        ]);
+
+        return response($this->sendResponse($response->getStatusCode(), $response->json()))
+            ->setStatusCode($response->getStatusCode());
+    }
+
+    public function unlockCard($account_number)
+    {
+        $response = $this->client->post($this->endpoint . '/card/unlock/' . $account_number, [
+            'password'      =>  'password'
+        ]);
+
+        return response($this->sendResponse($response->getStatusCode(), $response->json()))
+            ->setStatusCode($response->getStatusCode());
+    }
+
+    public function showCard($account_number)
+    {
+        $response = $this->client->get($this->endpoint . '/card/show/' . $account_number);
+
+        return response($this->sendResponse($response->getStatusCode(), $response->json()))
+            ->setStatusCode($response->getStatusCode());
+    }
+
+    public function showCvv($account_number)
+    {
+        $response = $this->client->get($this->endpoint . '/card/show/cvv/' . $account_number);
 
         return response($this->sendResponse($response->getStatusCode(), $response->json()))
             ->setStatusCode($response->getStatusCode());
