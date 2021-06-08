@@ -109,7 +109,7 @@ class Wallet
 
     public function transferViaInstapay($request)
     {
-        $response = $this->client->post($this->endpoint . '/wallet/fund/transfer/instapay/060002135550', [
+        $response = $this->client->post($this->endpoint . '/wallet/fund/transfer/instapay/'. $request->account_number, [
             'password'          =>  'password',
             'amount'            =>  $request->amount,
             'accredited_bank'   =>  $request->accredited_bank,
