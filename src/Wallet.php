@@ -109,7 +109,7 @@ class Wallet
 
     public function transferViaInstapay($request)
     {
-        $response = $this->client->post($this->endpoint . '/wallet/fund/transfer/instapay/'. $request->account_number, [
+        $response = $this->client->post($this->endpoint . '/wallet/fund/transfer/instapay/' . $request->account_number, [
             'password'          =>  'password',
             'amount'            =>  $request->amount,
             'accredited_bank'   =>  $request->accredited_bank,
@@ -191,6 +191,51 @@ class Wallet
     public function showCvv($account_number)
     {
         $response = $this->client->get($this->endpoint . '/card/show/cvv/' . $account_number);
+
+        return response($this->sendResponse($response->getStatusCode(), $response->json()))
+            ->setStatusCode($response->getStatusCode());
+    }
+
+    public function generateCvv($account_number)
+    {
+        $response1 = $this->client->post($this->endpoint . '/card/generate/cvv/' . $account_number);
+
+        $response = $response1->json();
+        if ($response1->json()['success']) {
+            $message = ['message' => 'Cvv Successfully Generated.'];
+            $response = array_replace($response1->json(), $message);
+        };
+
+        return response($this->sendResponse($response1->getStatusCode(), $response))
+            ->setStatusCode($response1->getStatusCode());
+    }
+
+    public function getCard($account_number)
+    {
+        $response = $this->client->get($this->endpoint . '/wallet/balance/' . $account_number);
+
+        return response($this->sendResponse($response->getStatusCode(), $response->json()))
+            ->setStatusCode($response->getStatusCode());
+    }
+
+    public function validatePin($request)
+    {
+        $response = $this->client->post($this->endpoint . '/card/security/validate/pin/' . $request->account_number, [
+            'pin_number'    =>  $request->pin_number
+        ]);
+
+        return response($this->sendResponse($response->getStatusCode(), $response->json()))
+            ->setStatusCode($response->getStatusCode());
+    }
+
+    public function updateWithdrawalLimit($request)
+    {
+        $response = $this->client->put($this->endpoint . '/card/update/withdrawal/limit/' . $request->account_number, [
+            'amount' => $request->amount,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'password'  =>  'password'
+        ]);
 
         return response($this->sendResponse($response->getStatusCode(), $response->json()))
             ->setStatusCode($response->getStatusCode());
