@@ -120,6 +120,19 @@ class Wallet
 
         return response($response->json())->setStatusCode($response->getStatusCode());
     }
+    public function transferViaPesonet($request)
+    {
+        $response = $this->client->post($this->endpoint . '/wallet/fund/transfer/pesonet/' . $request->account_number, [
+            'password'          =>  'password',
+            'amount'            =>  $request->amount,
+            'accredited_bank'   =>  $request->accredited_bank,
+            'credit_account'    =>  $request->credit_account,
+            "account_name"      =>  $request->account_name,
+            "account_address"   =>  $request->account_address
+        ]);
+
+        return response($response->json())->setStatusCode($response->getStatusCode());
+    }
 
     public function createVirtualAccount($request)
     {
