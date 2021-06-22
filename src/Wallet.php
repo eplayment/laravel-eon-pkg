@@ -118,7 +118,8 @@ class Wallet
             "account_address"   =>  $request->account_address
         ]);
 
-        return response($response->json())->setStatusCode($response->getStatusCode());
+        return response($this->sendResponse($response->getStatusCode(), $response->json()))
+            ->setStatusCode($response->getStatusCode());
     }
     public function transferViaPesonet($request)
     {
@@ -131,7 +132,8 @@ class Wallet
             "account_address"   =>  $request->account_address
         ]);
 
-        return response($response->json())->setStatusCode($response->getStatusCode());
+        return response($this->sendResponse($response->getStatusCode(), $response->json()))
+            ->setStatusCode($response->getStatusCode());
     }
 
     public function createVirtualAccount($request)
@@ -143,8 +145,14 @@ class Wallet
             'password'      =>  'password'
         ]);
 
-        return response($this->sendResponse($response->getStatusCode(), $response->json()))
+        $response = response($this->sendResponse($response->getStatusCode(), $response->json()))
             ->setStatusCode($response->getStatusCode());
+
+        if($response->original['success']) {
+            return $this->getCard($response->original['data']['account_number']);
+        }
+
+        return $response;
     }
 
     private function sendResponse($status_code, $response_data)
@@ -249,6 +257,33 @@ class Wallet
             'end_date' => $request->end_date,
             'password'  =>  'password'
         ]);
+
+        return response($this->sendResponse($response->getStatusCode(), $response->json()))
+            ->setStatusCode($response->getStatusCode());
+    }
+
+    public function replaceCard($request)
+    {
+        $response = $this->client->post($this->endpoint . '/card/add/' . $request->account_number, [
+            'card_number'   =>  $request->card_number,
+            'pin_number'    =>  $request->pin_number
+        ]);
+
+        $response_data = $response->json();
+        if (!empty($response_data['success'])) {
+            $new_card_response = $this->activateCard($request->account_number);
+            if(!empty($new_card_response->original['success'])) {
+                return $this->getCard($request->account_number);
+            }
+        }
+
+        return response($this->sendResponse($response->getStatusCode(), $response->json()))
+            ->setStatusCode($response->getStatusCode());
+    }
+
+    public function activateCard($account_number)
+    {
+        $response = $this->client->post($this->endpoint . '/card/activate/' . $account_number);
 
         return response($this->sendResponse($response->getStatusCode(), $response->json()))
             ->setStatusCode($response->getStatusCode());
