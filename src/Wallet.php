@@ -109,7 +109,7 @@ class Wallet
 
     public function transferViaInstapay($request)
     {
-        $response = $this->client->post($this->endpoint . '/wallet/fund/transfer/instapay/' . $request->account_number, [
+        $response = $this->client->post($this->endpoint . '/wallet/fund/transfer/instapay/' . $request->debit_account, [
             'password'          =>  'password',
             'amount'            =>  $request->amount,
             'accredited_bank'   =>  $request->accredited_bank,
@@ -123,7 +123,7 @@ class Wallet
     }
     public function transferViaPesonet($request)
     {
-        $response = $this->client->post($this->endpoint . '/wallet/fund/transfer/pesonet/' . $request->account_number, [
+        $response = $this->client->post($this->endpoint . '/wallet/fund/transfer/pesonet/' . $request->debit_account, [
             'password'          =>  'password',
             'amount'            =>  $request->amount,
             'accredited_bank'   =>  $request->accredited_bank,
@@ -148,21 +148,21 @@ class Wallet
         $response = response($this->sendResponse($response->getStatusCode(), $response->json()))
             ->setStatusCode($response->getStatusCode());
 
-        if($response->original['success']) {
+        if ($response->original['success']) {
             return $this->getCard($response->original['data']['account_number']);
         }
 
         return $response;
     }
 
-    private function sendResponse($status_code, $response_data)
+    private function sendResponse($status_code, $response_data, $message = null)
     {
         if ($status_code === 201 || $status_code === 200) {
             if (!empty($response_data['success']))
                 return $response_data;
             return [
                 'success'   =>  true,
-                'message'   =>  !empty($response_data['description']) ? $response_data['description'] : null,
+                'message'   =>  !empty($response_data['description']) ? $response_data['description'] : $message,
                 'data'      =>  $response_data
             ];
         }
@@ -272,7 +272,7 @@ class Wallet
         $response_data = $response->json();
         if (!empty($response_data['success'])) {
             $new_card_response = $this->activateCard($request->account_number);
-            if(!empty($new_card_response->original['success'])) {
+            if (!empty($new_card_response->original['success'])) {
                 return $this->getCard($request->account_number);
             }
         }
@@ -286,6 +286,17 @@ class Wallet
         $response = $this->client->post($this->endpoint . '/card/activate/' . $account_number);
 
         return response($this->sendResponse($response->getStatusCode(), $response->json()))
+            ->setStatusCode($response->getStatusCode());
+    }
+
+    public function eonUniounBankTransfer($request)
+    {
+        $response = $this->client->post($this->endpoint . '/wallet/fund/transfer/' . $request->debit_account, [
+            'credit_account'    =>  $request->credit_account,
+            'amount'            =>  $request->amount
+        ]);
+
+        return response($this->sendResponse($response->getStatusCode(), $response->json(), 'Successfully Transferred to '. $request->credit_account))
             ->setStatusCode($response->getStatusCode());
     }
 }
