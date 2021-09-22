@@ -8,7 +8,7 @@
     }],
     "minimum-stability": "stable",
     "require": {
-        "laravel/framework": "^7.24||^8.0",
+        "laravel/framework": "^7.24||^8.40",
         "php": "^7.4||^8.0"
     },
     "autoload": {
