@@ -1,5 +1,9 @@
 <?php
 
 return [
-    'url'   =>  env('WALLET_URL', '')
+    
+    'endpoint' => env('WALLET_ENDPOINT', ''),
+    
+    'token' => env('WALLET_TOKEN', ''),
+    
 ];
