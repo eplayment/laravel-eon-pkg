@@ -11,8 +11,8 @@ class Wallet
 
     public function __construct()
     {
-        $this->endpoint = config('wallet.url');
-        $this->client = Http::withHeaders([
+        $this->endpoint = config('wallet.endpoint');
+        $this->client = Http::withToken(config('wallet.token'))->withHeaders([
             'content-type'  =>  'application/json',
             'Accept'        =>  'application/json'
         ]);
